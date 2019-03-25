@@ -6,13 +6,18 @@
   "browser_action":{
     "default_popup":"html/popup.html"
   },
+  "background":{
+    "scripts":["scripts/background.js"],
+    "persistent":false
+  },
   "content_scripts":[
     {
       "matches": ["<all_urls>"],
       "css":["style/style.css"],
       "run_at":"document_start",
-      "js":["scripts/util.js","scripts/p5.min.js","scripts/painting.js","scripts/content.js"]
+      "js":["scripts/util.js","scripts/p5.min.js", "scripts/p5.sound.min.js","scripts/drawable.js","scripts/painting.js","scripts/spotlight.js","scripts/audio.js","scripts/content.js"]
     }
   ],
+  "web_accessible_resources":["assets/*"],
   "manifest_version":2
 }

@@ -4,137 +4,125 @@ console.log("woot")
 
 var paintingContainer = Util.dom('div', {id:"paintingContainer"})
 
-var mouseX = []
-var mouseY = []
+
+// var windowSizes = {short:40, medium:80, long:120}   // Used this in making spotlight
+var windowSizes = {short:10, medium:20, long:40}
+// var windowSizes = {short:1, medium:5, long:10}
+var mouse;
+
+var spotlight = false;
+var painting = false;
+var audio = true;
 
 
-new p5 ((p)=>{
+var globalColor = {
+  r:200,
+  g:240,
+  b:255,
+  primary:{r:200,g:240,b:255},
+  secondary:{r:240,g:200,b:255}
+};
 
-  var i =0;
+var test = {
+  x:{
+    values:[1,2,3,4,5,6,7,8,9],
+    short:0,
+    medium:0,
+    long:0
+  },
+  y:{
+    values:[1,2,3,4,5,6,7,8,9],
+    short:0,
+    medium:0,
+    long:0
+  }
+}
 
+var mindfulP5 = new p5 ((p)=>{
+
+
+  // p.preload = function(){
+  // }
+
+  //Setup
   p.setup = function (){
     p.createCanvas(document.body.clientWidth, document.body.clientHeight);
-    mouseX = [p.mouseX]
-    mouseY = [p.mouseY]
-    // p.noStroke();
-    // p.blendMode(p.LIGHTEST)
-    // p.loadPixels();
-    // p.pixels = Array(p.width*p.height*4).fill(0)
+    p.mouseDown = false;
+    // Audio.buffers['bubbles.mp3'].play();
+    p.frame = 0;
+    mouse = {
+      x:{
+        values:Array(windowSizes.long).fill(p.mouseX),
+        short:p.mouseX,
+        medium:p.mouseX,
+        long:p.mouseX
+      },
+      y:{
+        values:Array(windowSizes.long).fill(p.mouseY),
+        short:p.mouseY,
+        medium:p.mouseY,
+        long:p.mouseY
+      }
+    }
+  }// End Setup
+
+
+
+  p.mousePressed = function(){
+    if(painting){
+      Painting.mousePressed(p,mouse)
+    }
+    p.mouseDown = true;
   }
 
-  function enclosedBox (x, y, w, h, t, col){
-    p.fill(col);
-    p.rect(x-w/2-t,y-h/2-t,w+2*t,t)
-    p.rect(x-w/2-t,y+h/2,w+2*t,t)
-    p.rect(x-w/2-t,y-h/2-1,t,h+2)
-    p.rect(x+w/2,y-h/2-1,t,h+2)
+  p.mouseReleased = function(e){
+    p.mouseDown = false;
   }
 
-  function gradientEllipse(x,y,w,h,rgb, fadeRate){
-    if (rgb == undefined){
-      rgb = {r:0,g:0,b:0}
+  p.mouseWheel = function (e){
+    if(painting){
+      Painting.mouseWheel(p,e.delta)
     }
-    if (fadeRate == undefined){
-      fadeRate = 1
-    }
-    p.fill(255,255,255,0);
-    var c = 0;
-    while(c<255){
-      p.stroke(p.color(0,0,0,c))
-      p.ellipse(x,y,w,h)
-      // enclosedBox(x,y,w,h,1,p.color(rgb.r,rgb.g,rgb.b,Util.clip((c),0,255)))
-      w++;
-      h++;
-      c+= fadeRate;
-    }
-
   }
 
+  p.keyPressed = function (e){
 
-  function gradientBox (x,y, w,h, rgb, fadeRate){
+    if(audio){
+      console.log("okay")
+      if(Audio.keys.includes(e.key.toLowerCase())){
+        console.log("okay2")
 
-    if (rgb == undefined){
-      rgb = {r:0,g:0,b:0}
+        Audio.play({name:Audio.keyMapping[e.key.toLowerCase()]})
+
+        // Audio.play({name:Object.keys(Audio.buffers)[Math.floor(Math.random()*Object.keys(Audio.buffers).length)]})
+      }
     }
-    if (fadeRate == undefined){
-      fadeRate = 1
-    }
-    var c = 0;
-    while(c<255){
-
-      enclosedBox(x,y,w,h,1,p.color(rgb.r,rgb.g,rgb.b,Util.clip((c),0,255)))
-      w++;
-      h++;
-      c+= fadeRate;
-    }
-    enclosedBox(x,y,w,h,Math.max(p.width,p.height),p.color(rgb.r,rgb.g,rgb.b,255))
-  }
-
-  function crudeGradientBox(x,y,w,h,rgb, boxes, boxWidth){
-
-    if(isNaN(boxes)){
-      boxes = 3
-    }
-    if(isNaN(boxWidth)){
-      boxWidth=5
-    }
-    if(rgb==undefined){
-      rgb = {r:255,g:255,b:255}
-    }
-
-    p.fill(255,255,255,0)
-
-    p.strokeWeight(boxWidth+1)
-
-    for (var i = 1; i<=boxes; i+=1){
-      p.stroke(p.color(rgb.r,rgb.g,rgb.b,(255*i/boxes)))
-      p.rect(
-        x-w/2-(i*boxWidth)-1,
-        y-h/2-i*boxWidth,
-        w+2*i*boxWidth,
-        h+2*i*boxWidth);
-    }
-
-    p.stroke(p.color(rgb.r,rgb.g,rgb.b,255));
-    var bigger = 5000; // should probably be the max of p.height or p.width, but safe to assume 5000 pixels is big enough
-    p.strokeWeight(bigger);
-    p.rect(
-      x-w/2-(boxWidth*(boxes+1))-bigger/2+boxWidth/2,
-      1+y-h/2-boxWidth*(boxes+1)-bigger/2+boxWidth/2,
-      bigger+boxWidth*boxes*2+boxWidth+w-1,
-      bigger+boxWidth*boxes*2+boxWidth+h-1)
   }
 
   p.draw = function(){
-
-    var windowSizes = {short:40, medium:80, long:120}
-
-    mouseX.push(p.mouseX)
-    mouseY.push(p.mouseY)
-    mouseX = mouseX.splice(-1*windowSizes.long)
-    mouseY = mouseY.splice(-1*windowSizes.long)
-
-    var mouse = Util.mouseWindows(mouseX, mouseY, windowSizes)
-
-    var delta = Math.abs(mouse.x.medium-mouse.x.long) + Math.abs(mouse.y.medium-mouse.y.long)
-    // var delta = (Math.abs(shortWindowX-meanX) + Math.abs(shortWindowY-meanY))
-
-    // if (mouseX[0]!=mouseX[1] || mouseY[0] != mouseY[1]){
     p.clear()
+    p.frame = (p.frame+1)%255
+    mouse.x.values.push(p.mouseX)
+    mouse.y.values.push(p.mouseY)
+    mouse.x.values = mouse.x.values.slice(-1*windowSizes.long)
+    mouse.y.values = mouse.y.values.slice(-1*windowSizes.long)
 
-    var h = 200+delta
-    var w = 300+delta
-
-      // var h = 300;
-      // var w = 400;
-    if(spotlight){
-      crudeGradientBox(mouse.x.long, mouse.y.long, w,h,{r:240,g:245,b:255},255,1)
+    if(mouse.x.values.length>=windowSizes.long-1){
+      mouse = Util.mouseWindows(mouse, windowSizes)
     }
 
-      // crudeGradientBox(Util.mean(mouseX), Util.mean(mouseY), 400,300,{r:235,g:245,b:255},1)
-    // }
+    var delta = Math.abs(mouse.x.medium-mouse.x.long) + Math.abs(mouse.y.medium-mouse.y.long)
+
+    if(spotlight){
+      Spotlight.draw(p, mouse.x.long, mouse.y.long, 300+delta, 400+delta,{r:240,g:245,b:255},255,1)
+    }
+
+    if(painting){
+      Painting.draw(p,mouse)
+    }
+
   }
 }, paintingContainer);
 
-
+// paintingContainer.querySelector('canvas')[0].class = "mindful-browsing-canvas"
 document.lastChild.appendChild(paintingContainer)
