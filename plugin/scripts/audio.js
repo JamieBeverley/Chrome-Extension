@@ -15,8 +15,209 @@ for (let i =0; i<Audio.keys.length; i++){
 }
 
 Audio.buffers = {}
-
 Audio.loaded = false;
+
+Audio.setterDom = function (currentState){
+  var container = Util.dom("div")
+  var top = Util.dom('div',{className:"top"},[Util.dom('div',{className:'title',innerHTML:"Music"})])
+  var toggle = Util.toggle(currentState.audio.on, (event) => {
+    currentState.audio.on = event.target.checked
+    chrome.storage.local.set({'state':currentState}, (x)=>{console.log('audio '+event.target.checked?'on':'off')});
+    if(event.target.checked){
+      appendConfig();
+    } else {
+      container.innerHTML = ""
+      container.appendChild(top);
+    }
+  });
+
+  top.appendChild(toggle)
+  container.appendChild(top);
+
+  function appendConfig(){
+    var domains = Util.domainsWidget(currentState.audio.domains,(x)=>{currentState.audio.domains=x;chrome.storage.local.set({"state":currentState})})
+    container.appendChild(Util.labelRow("Domains",domains));
+  }
+
+  if(currentState.audio.on){
+    appendConfig();
+  }
+
+  return container;
+}///////////////// End Setter Dom
+
+
+Audio.synthsPlaying = {}
+
+Audio.keyPressed = function(e){
+  if(Object.keys(Audio.synthsPlaying).includes(e.key.toLowerCase())){
+    Audio.synthsPlaying[e.key.toLowerCase()].release(0.5)
+  }
+  var note = Audio.midicps(Audio.notes[Math.floor(Audio.notes.length*Math.random())])
+  Audio.synthsPlaying[e.key.toLowerCase()] = Audio.synth2(note,0.05)
+}
+
+Audio.keyReleased = function (e){
+  Audio.synthsPlaying[e.key.toLowerCase()].release(0.5);
+  delete Audio.synthsPlaying[e.key.toLowerCase()]
+}
+
+
+var maxDist = window.innerHeight+window.innerWidth;
+
+Audio.mouseSynths = [];
+
+Audio.draw = function (mouse){
+  var l = mouse.x.values.length-1
+  var dist = Math.abs(mouse.x.values[l]-mouse.x.values[l-1]) + Math.abs(mouse.y.values[l]-mouse.y.values[l-1]);
+
+  if(dist>200){
+    var note = Audio.notes[Math.floor(mouse.y.values[l]*(Audio.notes.length)/window.innerHeight)];
+    console.log(note)
+    var dur = dist*6/maxDist;
+    Audio.synth3(Audio.midicps(note),0.1,dur)
+
+  }
+
+}
+
+// WAAPI stuff
+Audio.notes= [60,67,72,79,86].reverse()
+Audio.notes.random = function(){
+  return Audio.notes[Math.floor(Audio.notes.length*Math.random())]
+}
+
+Audio.midicps = function(midinote){
+  return 440*Math.pow(2,(midinote-69)/12)
+}
+
+
+
+
+
+Audio.synth2 = function(freq, amp){
+  var osc1 = Audio.ac.createOscillator();
+  osc1.type = "sine"
+  osc1.frequency = freq;
+
+  var osc2 = Audio.ac.createOscillator();
+  osc2.type = "sine"
+  osc2.frequency.value = freq*1.01;
+
+  var osc3 = Audio.ac.createOscillator();
+  osc3.type = "sine"
+  osc3.frequency.value = freq*1.02;
+
+
+  var gain = Audio.ac.createGain();
+  gain.gain.value = amp
+
+  console.log("okay..")
+  osc1.connect(gain)
+  osc2.connect(gain);
+  osc3.connect(gain);
+
+  var env = Audio.adsr(1,0.5,0.5,0.5);
+  gain.connect(env);
+  env.connect(Audio.ac.destination);
+  osc1.start();
+  osc2.start();
+  osc3.start();
+  var synth = {release:env.release,gain: gain}
+  return synth
+}
+
+
+Audio.synth1 = function(freq, amp){
+  var osc1 = Audio.ac.createOscillator();
+  osc1.type = "sine"
+  osc1.frequency = freq;
+
+  var osc2 = Audio.ac.createOscillator();
+  osc2.type = "sine"
+  osc2.frequency.value = freq*1.01;
+
+  var osc3 = Audio.ac.createOscillator();
+  osc3.type = "sine"
+  osc3.frequency.value = freq*1.02;
+
+
+  var gain = Audio.ac.createGain();
+  gain.gain.value = amp
+
+  console.log("okay..")
+  osc1.connect(gain)
+  osc2.connect(gain);
+  osc3.connect(gain);
+
+  var env = Audio.asr(0.05,0.5,0.1);
+  gain.connect(env);
+  env.connect(Audio.ac.destination);
+  osc1.start();
+  osc2.start();
+  osc3.start();
+  // return
+}
+
+
+Audio.synth3 = function(freq, amp, dur){
+  var osc1 = Audio.ac.createOscillator();
+  osc1.type = "sine"
+  osc1.frequency = freq;
+
+  var osc2 = Audio.ac.createOscillator();
+  osc2.type = "sine"
+  osc2.frequency.value = freq*1.01;
+
+  var osc3 = Audio.ac.createOscillator();
+  osc3.type = "sine"
+  osc3.frequency.value = freq*1.02;
+
+
+  var gain = Audio.ac.createGain();
+  gain.gain.value = amp
+
+  console.log("okay..")
+  osc1.connect(gain)
+  osc2.connect(gain);
+  osc3.connect(gain);
+
+  var hpf = Audio.ac.createBiquadFilter();
+  hpf.type = "highpass"
+  hpf.frequency.value = freq/2;
+
+  gain.connect(hpf);
+
+  var env = Audio.asr(1,dur,1);
+  hpf.connect(env);
+  env.connect(Audio.ac.destination);
+  osc1.start();
+  osc2.start();
+  osc3.start();
+  var s = {hpf:hpf}
+  return
+}
+
+Audio.adsr = function(a,d,s,r){
+  var gain = Audio.ac.createGain();
+  gain.gain.value = 0;
+  gain.gain.linearRampToValueAtTime(1,Audio.ac.currentTime+a)
+  gain.gain.linearRampToValueAtTime(s,Audio.ac.currentTime+a+d)
+  gain.release = function(){
+    gain.gain.cancelAndHoldAtTime(Audio.ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0,Audio.ac.currentTime+r)
+  }
+  return gain;
+}
+
+Audio.asr = function(a,s,r){
+  var gain = Audio.ac.createGain();
+  gain.gain.linearRampToValueAtTime(1,Audio.ac.currentTime+a)
+  gain.gain.linearRampToValueAtTime(1,Audio.ac.currentTime+a+s)
+  gain.gain.linearRampToValueAtTime(0,Audio.ac.currentTime+a+s+r)
+  return gain;
+}
+
 
 Audio.loadSamples = function() {
 

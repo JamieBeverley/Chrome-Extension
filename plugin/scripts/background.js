@@ -1,9 +1,11 @@
 var defaultState = {
   audio:{
-    on:false
+    on:false,
+    domains:[],
   },
   painting:{
-    on:false
+    on:false,
+    domains:[]
   },
   spotlight:{
     on:false,
@@ -13,7 +15,8 @@ var defaultState = {
     domains:[]
   },
   timeout:{
-    on:false
+    on:false,
+    domains:[]
   }
 }
 

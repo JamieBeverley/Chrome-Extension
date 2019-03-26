@@ -32,8 +32,27 @@ chrome.storage.local.get('state',function(result){
   Spotlight.config = state.spotlight;
   Audio.config = state.audio;
   Painting.config = state.painting;
-  start();
+
+  var spotlightGo = Spotlight.config.on && (Spotlight.config.domains.includes(location.hostname) || Spotlight.config.domains.length==0)
+  var audioGo = Audio.config.on && (Audio.config.domains.includes(location.hostname) || Audio.config.domains.length==0)
+  var paintingGo = Painting.config.on && (Painting.config.domains.includes(location.hostname) || Painting.config.domains.length==0)
+
+  if (spotlightGo || paintingGo || audioGo){
+    start();
+
+    if (audioGo){
+      document.addEventListener('visibilitychange',(x)=>{
+        if (document.hidden){
+          for (let i in Audio.synthsPlaying){
+            Audio.synthsPlaying[i].release();
+          }
+        }
+      });
+    }
+
+  }
 })
+
 
 function start (){
   var mindfulP5 = new p5 ((p)=>{
@@ -81,11 +100,15 @@ function start (){
     p.keyPressed = function (e){
 
       if(state.audio.on){
-        if(Audio.keys.includes(e.key.toLowerCase())){
-          Audio.play({name:Audio.keyMapping[e.key.toLowerCase()]})
-
+        Audio.keyPressed(e)
+          // Audio.play({name:Audio.keyMapping[e.key.toLowerCase()]})
           // Audio.play({name:Object.keys(Audio.buffers)[Math.floor(Math.random()*Object.keys(Audio.buffers).length)]})
-        }
+      }
+    }
+
+    p.keyReleased = function(e){
+      if (state.audio.on){
+        Audio.keyReleased(e)
       }
     }
 
@@ -109,6 +132,10 @@ function start (){
 
       if(state.painting.on){
         Painting.draw(p,mouse)
+      }
+
+      if(state.audio.on){
+        Audio.draw(mouse)
       }
 
     }

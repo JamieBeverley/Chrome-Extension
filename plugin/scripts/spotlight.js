@@ -2,7 +2,6 @@ var Spotlight = {}
 
 Spotlight.setterDom = function(currentState){
 
-  var config = currentState.spotlight;
   var container = Util.dom("div")
   var top = Util.dom('div',{className:"top"},[Util.dom('div',{className:'title',innerHTML:"Spotlight"})])
   var toggle = Util.toggle(currentState.spotlight.on, (event) => {

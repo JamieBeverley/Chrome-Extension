@@ -9,10 +9,8 @@
 // })
 
 chrome.storage.local.get('state',function(result){
-
-  var okay = Spotlight.setterDom(result.state);
-  console.log(okay)
-  document.getElementById("spotlight").appendChild(okay);
-
+  document.getElementById("spotlight").appendChild(Spotlight.setterDom(result.state));
+  document.getElementById("audio").appendChild(Audio.setterDom(result.state));
+  document.getElementById('painting').appendChild(Painting.setterDom(result.state));
 
 })

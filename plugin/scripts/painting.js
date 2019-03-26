@@ -2,6 +2,37 @@
 var Painting = {}
 
 
+
+Painting.setterDom = function (currentState){
+  var container = Util.dom("div")
+  var top = Util.dom('div',{className:"top"},[Util.dom('div',{className:'title',innerHTML:"Painting"})])
+  var toggle = Util.toggle(currentState.painting.on, (event) => {
+    currentState.painting.on = event.target.checked
+    chrome.storage.local.set({'state':currentState}, (x)=>{console.log('painting '+event.target.checked?'on':'off')});
+    if(event.target.checked){
+      appendConfig();
+    } else {
+      container.innerHTML = ""
+      container.appendChild(top);
+    }
+  });
+
+  top.appendChild(toggle)
+  container.appendChild(top);
+
+  function appendConfig(){
+    var domains = Util.domainsWidget(currentState.painting.domains,(x)=>{currentState.painting.domains=x;chrome.storage.local.set({"state":currentState})})
+    container.appendChild(Util.labelRow("Domains",domains));
+  }
+
+  if(currentState.painting.on){
+    appendConfig();
+  }
+
+  return container;
+}
+
+
 Painting.mouseWheel = function(p,delta){
   // console.log(delta)''
 
