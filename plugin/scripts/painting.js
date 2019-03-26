@@ -47,8 +47,8 @@ Painting.draw = function (p, mouse){
   // if(Math.abs(mouse.x.values[l]-mouse.x.values[l-1])>20|| Math.abs(mouse.y.values[l]-mouse.y.values[l-1])>20 ){
       new Rect(
         {x:mouse.x.values[l],y:mouse.y.values[l]},
-        {w:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?2:5,h:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?2:5},
-        {r:0,g:0,b:0},
+        {w:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?20:50,h:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?20:50},
+        globalColor.primary,
         p.mouseDown?Infinity:2,
         {x:mouse.x.values[l]-mouse.x.values[l-1],y:mouse.y.values[l]-mouse.y.values[l-1]}
       )

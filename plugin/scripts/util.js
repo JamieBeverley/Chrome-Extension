@@ -13,6 +13,103 @@ Util.dom = function(type, properties,children){
 };
 
 
+Util.arraysEqual = function(a1,a2){
+  if (a1.length!= a2.length){
+    return false;
+  }
+  var ar1 = a1.sort()
+  var ar2 = a2.sort();
+  for(let i = 0; i<ar1.length; i++){
+      if(ar1[i]!=ar2[i]){
+        return false;
+      }
+  }
+  return true;
+}
+
+
+
+Util.domainsWidget = function(ival, onchange){
+  var container = Util.dom('div')
+  console.log(ival)
+  console.log("a")
+  var all = Util.dom('option',{innerHTML:"All pages",value:"all",selected:ival.length==0})
+  var select = Util.dom('option',{innerHTML:"Select pages",value:"select", selected:ival.length!=0})
+  var dd = Util.dom('select');
+  dd.appendChild(all);
+  dd.appendChild(select);
+
+  container.appendChild(dd);
+
+  function showTextArea (bool){
+    if(bool){
+      var textArea = Util.dom('textarea',{value:ival.join("\n"),rows:6,cols:30})
+      textArea.addEventListener('input',(x)=>{onchange(x.target.value.split("\n"))});
+      // textArea.onchange = (x)=>{console.log(onchange);console.log('kk...');onchange(x.target.value.split("\n"))};
+      // textArea.addEventListener('change',(x)=>{console.log(onchange);console.log('kk...');onchange(x.target.value.split("\n"))});
+      container.appendChild(Util.dom('div',{},[textArea]));
+    } else{
+      container.innerHTML = ""
+      container.appendChild(dd);
+    }
+  }
+
+  dd.addEventListener('change',function(e){
+    if(e.target.value == "all"){
+      showTextArea(false)
+      onchange([])
+    } else{
+      showTextArea(true)
+    }
+
+  })
+
+  showTextArea(ival.length!=0);
+
+  return container;
+}
+
+
+
+Util.toRGB = function(hex){
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {r: parseInt(result[1], 16),g: parseInt(result[2], 16),b: parseInt(result[3], 16)} : null;
+}
+
+
+
+Util.toHEX = function(rgb){
+
+    function componentToHex(c) {
+      var hex = c.toString(16);
+      return hex.length == 1 ? "0" + hex : hex;
+    }
+    return "#" + componentToHex(rgb.r) + componentToHex(rgb.g) + componentToHex(rgb.b);
+}
+
+Util.dumpState = function(){
+  chrome.storage.local.get("state",function(result){console.log(result.state)})
+}
+
+Util.toggle = function(isOn, onChange){
+
+  var on = Util.dom("label",{className:"switch"});
+  var checkbox = Util.dom("input",{type:"checkbox",checked:isOn});
+  on.appendChild(checkbox)
+  on.appendChild(Util.dom("span",{className:"slider round"}));
+
+  checkbox.addEventListener('change',onChange);
+  return on
+}
+
+Util.labelRow = function(label, child){
+  var container = Util.dom('div',{className:"labelRow"})
+  var label = Util.dom('label',{innerHTML:label})
+  container.appendChild(label)
+  container.appendChild(child)
+  return container
+}
+
 Util.shuffle = function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
