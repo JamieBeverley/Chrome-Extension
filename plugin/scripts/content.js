@@ -6,8 +6,8 @@ var paintingContainer = Util.dom('div', {id:"paintingContainer"})
 
 
 // var windowSizes = {short:40, medium:80, long:120}   // Used this in making spotlight
-var windowSizes = {short:10, medium:20, long:40}
-// var windowSizes = {short:1, medium:5, long:10}
+// var windowSizes = {short:10, medium:20, long:40}
+var windowSizes = {short:1, medium:2, long:3}
 var mouse;
 
 
@@ -38,6 +38,7 @@ chrome.storage.local.get('state',function(result){
   var paintingGo = Painting.config.on && (Painting.config.domains.includes(location.hostname) || Painting.config.domains.length==0)
 
   if (spotlightGo || paintingGo || audioGo){
+    console.log("spotlight: "+spotlightGo)
     start();
 
     if (audioGo){
@@ -99,10 +100,12 @@ function start (){
 
     p.keyPressed = function (e){
 
+      if(state.painting.on){
+        Painting.keyPressed(e)
+      }
+
       if(state.audio.on){
         Audio.keyPressed(e)
-          // Audio.play({name:Audio.keyMapping[e.key.toLowerCase()]})
-          // Audio.play({name:Object.keys(Audio.buffers)[Math.floor(Math.random()*Object.keys(Audio.buffers).length)]})
       }
     }
 
@@ -113,8 +116,17 @@ function start (){
     }
 
     p.draw = function(){
-      p.clear()
       p.frame = (p.frame+1)%255
+
+      // console.log(state.spotligh)
+      if(state.spotlight.on){
+        p.clear()
+      } else{
+        if(state.painting.on && state.painting.clearEveryFrame){
+          p.clear()
+        }
+      }
+      // p.clear()
       mouse.x.values.push(p.mouseX)
       mouse.y.values.push(p.mouseY)
       mouse.x.values = mouse.x.values.slice(-1*windowSizes.long)
@@ -142,5 +154,8 @@ function start (){
   }, paintingContainer);
 
   // paintingContainer.querySelector('canvas')[0].class = "mindful-browsing-canvas"
-  document.lastChild.appendChild(paintingContainer)
+  document.lastChild.appendChild(paintingContainer);
+  if(state.painting.on){
+    document.lastChild.appendChild(Painting.optionsDom());
+  }
 }

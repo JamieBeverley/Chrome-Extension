@@ -1,5 +1,5 @@
 {
-  "name": "<name>",
+  "name": "Surfeur",
   "version":"1.0",
   "description": "mindful and slow interventions in the browser",
   "permissions":["storage"],
@@ -18,6 +18,6 @@
       "js":["scripts/util.js","scripts/p5.min.js","scripts/drawable.js","scripts/painting.js","scripts/spotlight.js","scripts/audio.js","scripts/content.js"]
     }
   ],
-  "web_accessible_resources":["assets/*"],
+  "web_accessible_resources":["assets/*","icons/*","styles/*"],
   "manifest_version":2
 }

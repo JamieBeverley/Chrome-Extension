@@ -1,6 +1,76 @@
 
 var Painting = {}
 
+Painting.palettes = [
+  [{r:254,g:271,b:161}, {r:255,g:120,b:103}, {r:132,g:210,b:138}],
+  [{r:255,g:202,b:15},  {r:253, g:143,b:82}, {r:18, g:99, b:161}],
+  [{r:234,g:211,b:162}, {r:224,g:102, b:65}, {r:33,g:42,b:55}]
+]
+
+Painting.paletteIndex = Math.floor(Painting.palettes.length*Math.random());
+Painting.currentPalette = Painting.palettes[Painting.paletteIndex]
+console.log(Painting.currentPalette)
+for (let i in Painting.currentPalette){
+  console.log(Util.toHEX(Painting.currentPalette[i]))
+}
+
+// Painting.shiftPalette = function(){
+//   Painting.paletteIndex = (Painting.paletteIndex+1)%Painting.palettes.length
+//   Painting.currentPalette = Painting.palettes[Painting.paletteIndex];
+// }
+
+Painting.optionsDom = function (){
+  // var container = Util.dom('div')
+  var container = Util.dom('div',{className:"mindful-painting-settings"})
+  container.style.top = "20px"
+  container.style.left = "20px";
+  container.ondrag = function(e){
+    // e.preventDefault()
+    if(e.clientY!=0){
+      container.style.top= e.clientY+"px";
+      container.style.left = e.clientX+"px";
+    }
+  }
+
+  var icon = Util.dom('img', {className:"mindful-painting-settings-img","src":chrome.runtime.getURL("/icons/settings.png")})
+  icon.onclick = function(){
+    console.log('test')
+    console.log("mindful-painting-settings")
+    if(container.classList.contains("expanded")){
+      container.classList.remove("expanded")
+    } else {
+      container.classList.add("expanded")
+    }
+  }
+  container.appendChild(icon);
+
+  var palettePicker = Painting.palettePickerDom()
+  container.appendChild(Util.labelRow("Colors", palettePicker))
+
+  var clearToggle = Util.toggle(Painting.config.clearEveryFrame,function(x){
+    state.painting.clearEveryFrame = x.target.checked;
+    chrome.storage.local.set('state',state)
+  })
+  container.appendChild(Util.labelRow('Clear canvas',clearToggle))
+
+  return container
+}
+
+Painting.palettePickerDom = function(){
+  var container = Util.dom('div')
+  console.log(Util.toHEX(Painting.currentPalette[1]))
+  var col1 = Util.dom('input',{type:"color",value:Util.toHEX(Painting.currentPalette[0])})
+  var col2 = Util.dom('input',{type:"color",value:Util.toHEX(Painting.currentPalette[1])})
+  var col3 = Util.dom('input',{type:"color",value:Util.toHEX(Painting.currentPalette[2])})
+  col1.addEventListener('change',(x)=>{Painting.currentPalette[0] = Util.toRGB(x.target.value)});
+  col2.addEventListener('change',(x)=>{Painting.currentPalette[1] = Util.toRGB(x.target.value)});
+  col3.addEventListener('change',(x)=>{Painting.currentPalette[2] = Util.toRGB(x.target.value)});
+  container.appendChild(col1)
+  container.appendChild(col2)
+  container.appendChild(col3)
+  return container;
+}
+
 
 
 Painting.setterDom = function (currentState){
@@ -33,6 +103,12 @@ Painting.setterDom = function (currentState){
 }
 
 
+Painting.keyPressed = function (e){
+  if(e.key=="Shift"){
+    // Painting.shiftPalette();
+  }
+}
+
 Painting.mouseWheel = function(p,delta){
   // console.log(delta)''
 
@@ -42,7 +118,7 @@ Painting.mouseWheel = function(p,delta){
 
       {x:p.windowWidth*Math.random(),y:delta>0?p.windowHeight:-size},
       {w:Math.random()*size,h:Math.random()*size},
-      delta>0?globalColor.secondary:globalColor.primary,
+      delta>0?Painting.currentPalette[1]:Painting.currentPalette[0],
       5,
       // {x:(Math.random()-0.5)*2*5,y:Math.random()*-300(delta>0?(-1):1)})
       {x:(Math.random()-0.5)*2*5,y:Math.random()*delta*10*-1})
@@ -56,7 +132,7 @@ Painting.mousePressed = function(p,mouse){
   new ExpandingBox(
     {x:mouse.x.values[l], y:mouse.y.values[l]},
     {w:1,h:1},
-    {r:150*Math.random(),g:240,b:350*Math.random()},
+    Painting.currentPalette[Math.floor(Painting.currentPalette.length*Math.random())],
      0.5,
      600
   )
@@ -79,8 +155,8 @@ Painting.draw = function (p, mouse){
       new Rect(
         {x:mouse.x.values[l],y:mouse.y.values[l]},
         {w:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?20:50,h:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?20:50},
-        globalColor.primary,
-        p.mouseDown?Infinity:2,
+        Painting.currentPalette[2],
+        p.mouseDown?10:2,
         {x:mouse.x.values[l]-mouse.x.values[l-1],y:mouse.y.values[l]-mouse.y.values[l-1]}
       )
     }

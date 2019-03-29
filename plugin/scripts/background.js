@@ -4,7 +4,8 @@ var defaultState = {
     domains:[],
   },
   painting:{
-    on:false,
+    on:true,
+    clearEveryFrame:true,
     domains:[]
   },
   spotlight:{
