@@ -1,3 +1,13 @@
+var palettes = [
+  [{r:254,g:271,b:161}, {r:255,g:120,b:103}, {r:132,g:210,b:138}],
+  [{r:255,g:202,b:15},  {r:253, g:143,b:82}, {r:18, g:99, b:161}],
+  [{r:234,g:211,b:162}, {r:224,g:102, b:65}, {r:33,g:42,b:55}]
+]
+
+var paletteIndex = Math.floor(palettes.length*Math.random());
+var currentPalette = palettes[paletteIndex]
+
+
 var defaultState = {
   audio:{
     on:false,
@@ -6,6 +16,8 @@ var defaultState = {
   painting:{
     on:true,
     clearEveryFrame:true,
+    brush:"rectangle",
+    currentPalette:currentPalette,
     domains:[]
   },
   spotlight:{

@@ -34,6 +34,17 @@ html{
 
 
 
+
+
+
+/* omg this is bad */
+.mindful-painting-settings-img{
+  width:0px;
+  height:0px;
+}
+
+
+
 .labelRow{
   margin-top:3%;
   margin-bottom:3%;
