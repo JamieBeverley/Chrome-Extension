@@ -10,11 +10,12 @@ var currentPalette = palettes[paletteIndex]
 
 var defaultState = {
   audio:{
-    on:false,
+    on:true,
+    masterGain:0.2,
     domains:[],
   },
   painting:{
-    on:true,
+    on:false,
     clearEveryFrame:true,
     brush:"rectangle",
     currentPalette:currentPalette,

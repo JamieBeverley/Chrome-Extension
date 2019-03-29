@@ -204,13 +204,6 @@ Painting.draw = function (p, mouse){
        p.mouseDown?10:2,
        {x:mouse.x.values[l]-mouse.x.values[l-1],y:mouse.y.values[l]-mouse.y.values[l-1],expandRate:100}
     )
-      // new Rect(
-      //   {x:mouse.x.values[l],y:mouse.y.values[l]},
-      //   {w:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?20:50,h:Math.abs(mouse.x.values[l])>Math.abs(mouse.y.values[l])?20:50},
-      //   state.painting.currentPalette[2],
-      //   p.mouseDown?10:2,
-      //   {x:mouse.x.values[l]-mouse.x.values[l-1],y:mouse.y.values[l]-mouse.y.values[l-1]}
-      // )
     }
 
   // Draw the drawables

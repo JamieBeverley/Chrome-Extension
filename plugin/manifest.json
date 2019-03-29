@@ -15,7 +15,7 @@
       "matches": ["<all_urls>"],
       "css":["style/style.css"],
       "run_at":"document_start",
-      "js":["scripts/util.js","scripts/p5.min.js","scripts/drawable.js","scripts/painting.js","scripts/spotlight.js","scripts/audio.js","scripts/content.js"]
+      "js":["scripts/util.js","scripts/p5.min.js","scripts/drawable.js","scripts/painting.js","scripts/spotlight.js","scripts/melody.js","scripts/audio.js","scripts/content.js"]
     }
   ],
   "web_accessible_resources":["assets/*","icons/*","styles/*"],
