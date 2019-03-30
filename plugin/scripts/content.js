@@ -172,6 +172,11 @@ function start (){
       container.appendChild(Spotlight.optionsDom())
     }
 
+    if(state.timeout.on){
+      container.appendChild(Util.dom('div',{innerHTML:"Timeout",className:'title'}))
+      container.appendChild(Timeout.optionsDom())
+    }
+
     options.append(container);
     document.lastChild.appendChild(options);
   }

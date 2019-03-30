@@ -13,5 +13,6 @@ chrome.storage.local.get('state',function(result){
   document.getElementById("spotlight").appendChild(Spotlight.setterDom(result.state));
   document.getElementById("audio").appendChild(Audio.setterDom(result.state));
   document.getElementById('painting').appendChild(Painting.setterDom(result.state));
+  document.getElementById('timeout').appendChild(Timeout.setterDom());
 
 })
