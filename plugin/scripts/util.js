@@ -1,5 +1,7 @@
 var Util ={};
 
+
+
 Util.dom = function(type, properties,children){
   var r = document.createElement(type);
   for (var i in properties){
@@ -25,6 +27,33 @@ Util.arraysEqual = function(a1,a2){
       }
   }
   return true;
+}
+
+
+Util.floatingSettingsWidget = function(){
+  var container = Util.dom('div',{className:"mindful-painting-settings"})
+  container.style.top = "20px"
+  container.style.left = "20px";
+  container.ondrag = function(e){
+    // e.preventDefault()
+    if(e.clientY!=0){
+      container.style.top= e.clientY+"px";
+      container.style.left = e.clientX+"px";
+    }
+  }
+
+  var icon = Util.dom('img', {className:"mindful-painting-settings-img","src":chrome.runtime.getURL("/icons/settings.png")})
+  icon.onclick = function(){
+    console.log('test')
+    console.log("mindful-painting-settings")
+    if(container.classList.contains("expanded")){
+      container.classList.remove("expanded")
+    } else {
+      container.classList.add("expanded")
+    }
+  }
+  container.appendChild(icon);
+  return container
 }
 
 

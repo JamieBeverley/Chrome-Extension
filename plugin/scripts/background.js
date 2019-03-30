@@ -12,10 +12,11 @@ var defaultState = {
   audio:{
     on:true,
     masterGain:0.2,
+    mode:"keyboard",
     domains:[],
   },
   painting:{
-    on:false,
+    on:true,
     clearEveryFrame:true,
     brush:"rectangle",
     currentPalette:currentPalette,

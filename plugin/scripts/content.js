@@ -6,8 +6,8 @@ var paintingContainer = Util.dom('div', {id:"paintingContainer"})
 
 
 // var windowSizes = {short:40, medium:80, long:120}   // Used this in making spotlight
-// var windowSizes = {short:10, medium:20, long:40}
-var windowSizes = {short:1, medium:2, long:3}
+var windowSizes = {short:10, medium:20, long:40}
+// var windowSizes = {short:1, medium:2, long:3}
 var mouse;
 
 
@@ -155,7 +155,24 @@ function start (){
 
   // paintingContainer.querySelector('canvas')[0].class = "mindful-browsing-canvas"
   document.lastChild.appendChild(paintingContainer);
-  if(state.painting.on){
-    document.lastChild.appendChild(Painting.optionsDom());
+  if(state.painting.on || state.audio.on || state.spotlight.on){
+    var options = Util.floatingSettingsWidget()
+    var container = Util.dom('div',{className:"options-content"})
+    if(state.painting.on){
+      container.appendChild(Util.dom('div',{innerHTML:"Painting",className:"title"}))
+      container.appendChild(Painting.optionsDom())
+    }
+
+    if(state.audio.on){
+      container.appendChild(Util.dom('div',{innerHTML:"Music",className:"title"}))
+      container.appendChild(Audio.optionsDom());
+    }
+    if(state.spotlight.on){
+      container.appendChild(Util.dom('div',{innerHTML:"Spotlight",className:'title'}))
+      container.appendChild(Spotlight.optionsDom())
+    }
+
+    options.append(container);
+    document.lastChild.appendChild(options);
   }
 }

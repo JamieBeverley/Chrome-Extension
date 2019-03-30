@@ -14,36 +14,32 @@ for (let i in Painting.currentPalette){
   console.log(Util.toHEX(Painting.currentPalette[i]))
 }
 
-// Painting.shiftPalette = function(){
-//   Painting.paletteIndex = (Painting.paletteIndex+1)%Painting.palettes.length
-//   Painting.currentPalette = Painting.palettes[Painting.paletteIndex];
-// }
 
 Painting.optionsDom = function (){
   // var container = Util.dom('div')
-  var container = Util.dom('div',{className:"mindful-painting-settings"})
-  container.style.top = "20px"
-  container.style.left = "20px";
-  container.ondrag = function(e){
-    // e.preventDefault()
-    if(e.clientY!=0){
-      container.style.top= e.clientY+"px";
-      container.style.left = e.clientX+"px";
-    }
-  }
-
-  var icon = Util.dom('img', {className:"mindful-painting-settings-img","src":chrome.runtime.getURL("/icons/settings.png")})
-  icon.onclick = function(){
-    console.log('test')
-    console.log("mindful-painting-settings")
-    if(container.classList.contains("expanded")){
-      container.classList.remove("expanded")
-    } else {
-      container.classList.add("expanded")
-    }
-  }
-  container.appendChild(icon);
-
+  // var container = Util.dom('div',{className:"mindful-painting-settings"})
+  // container.style.top = "20px"
+  // container.style.left = "20px";
+  // container.ondrag = function(e){
+  //   // e.preventDefault()
+  //   if(e.clientY!=0){
+  //     container.style.top= e.clientY+"px";
+  //     container.style.left = e.clientX+"px";
+  //   }
+  // }
+  //
+  // var icon = Util.dom('img', {className:"mindful-painting-settings-img","src":chrome.runtime.getURL("/icons/settings.png")})
+  // icon.onclick = function(){
+  //   console.log('test')
+  //   console.log("mindful-painting-settings")
+  //   if(container.classList.contains("expanded")){
+  //     container.classList.remove("expanded")
+  //   } else {
+  //     container.classList.add("expanded")
+  //   }
+  // }
+  // container.appendChild(icon);
+  var container = Util.dom('div',{})
   var palettePicker = Painting.palettePickerDom()
   container.appendChild(Util.labelRow("Colors", palettePicker))
 
@@ -114,7 +110,8 @@ Painting.palettePickerDom = function(){
 
 
 
-Painting.setterDom = function (currentState){
+Painting.setterDom = function (){
+  var currentState = state
   var container = Util.dom("div")
   var top = Util.dom('div',{className:"top"},[Util.dom('div',{className:'title',innerHTML:"Painting"})])
   var toggle = Util.toggle(currentState.painting.on, (event) => {

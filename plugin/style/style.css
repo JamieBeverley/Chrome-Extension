@@ -12,6 +12,12 @@
 } */
 
 
+.title{
+  font-weight: bold;
+  font-family: helvetica;
+  margin-left: 3%;
+}
+
 .labelRow{
   margin-top:3%;
   margin-bottom:3%;
@@ -28,9 +34,23 @@
 
 .labelRow input{
   position: relative;
+  width:50%;
+}
+
+.labelRow input[type="color"]{
+  position: relative;
   width:20%;
 }
 
+
+.options-content{
+  height: 74%;
+  position: relative;
+  overflow-y: scroll;
+  background-color: rgb(230,230,230);
+  padding-top:5%;
+  padding-bottom:5%;
+}
 
 .mindful-painting-settings{
   position: absolute;
@@ -43,7 +63,6 @@
   z-index: 9999999999999999999;
   background-color: rgba(255,255,255,0.5);
   border: 1pt solid rgb(200,200,200);
-  cursor:pointer;
   border-radius: 10px;
   overflow: hidden;
   transition: width 0.125s linear, height 0.125s linear;
@@ -51,15 +70,23 @@
 
 .expanded {
   width:250px;
-  height: 400px;
+  height: 250px;
   background-color: rgb(255,255,255)
+  /* overflow:scroll; */
 }
 
 .mindful-painting-settings-img{
   width: 38px;
   height: 38px;
+  cursor:pointer;
   position: relative;
+  /* position: fixed; */
 }
+
+.mindful-painting-settings-img .expanded{
+  /* background-color: red; */
+}
+
 
 .p5Canvas{
   position: fixed;
@@ -73,6 +100,17 @@
   z-index: 99999999;
   background-color: rgba(0,0,0,0);
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

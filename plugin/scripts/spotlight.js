@@ -1,5 +1,42 @@
 var Spotlight = {}
 
+Spotlight.optionsDom = function(){
+  var container = Util.dom('div',{className:'mindful-spotlight-options'});
+
+  var width = Util.dom('input',{type:'range',value:state.spotlight.width,max:1000,min:10});
+  var height = Util.dom('input',{type:'range',value:state.spotlight.height,max:1000,min:10});
+  var color = Util.dom('input',{type:"color",value:Util.toHEX(state.spotlight.col),width:100})
+
+  width.addEventListener('change',(x)=>{
+    chrome.storage.local.get('state',function(result){
+      state = result.state
+      state.spotlight.width = parseInt(x.target.value);
+      chrome.storage.local.set({'state':state});
+    })
+  });
+
+  height.addEventListener('change',(x)=>{
+    chrome.storage.local.get('state',function(result){
+      state = result.state
+      state.spotlight.height = parseInt(x.target.value);
+      chrome.storage.local.set({'state':state});
+    })
+  });
+
+  color.addEventListener('change',(x)=>{
+    chrome.storage.local.get('state',function(result){
+      state = result.state
+      state.spotlight.col = Util.toRGB(x.target.value);
+      chrome.storage.local.set({'state':state});
+    })
+  });
+  container.appendChild(Util.labelRow("width",width))
+  container.appendChild(Util.labelRow("height",height))
+  container.appendChild(Util.labelRow("color",color));
+
+  return container
+}
+
 Spotlight.setterDom = function(currentState){
 
   var container = Util.dom("div")
@@ -19,20 +56,8 @@ Spotlight.setterDom = function(currentState){
   container.appendChild(top);
 
   function appendConfig(){
-    var width = Util.dom('input',{type:'range',value:currentState.spotlight.width,max:1000,min:10});
-    var height = Util.dom('input',{type:'range',value:currentState.spotlight.height,max:1000,min:10});
-    var color = Util.dom('input',{type:"color",value:Util.toHEX(currentState.spotlight.col),width:100})
-    width.addEventListener('change',(x)=>{currentState.spotlight.width=parseInt(x.target.value);chrome.storage.local.set({'state':currentState});});
-    height.addEventListener('change',(x)=>{currentState.spotlight.height=parseInt(x.target.value);chrome.storage.local.set({'state':currentState});});
-    color.addEventListener('change',(x)=>{currentState.spotlight.col=Util.toRGB(x.target.value);chrome.storage.local.set({'state':currentState});});
-
     var domains = Util.domainsWidget(currentState.spotlight.domains,(x)=>{currentState.spotlight.domains=x;chrome.storage.local.set({"state":currentState})})
-
-
-
-    container.appendChild(Util.labelRow("Width", width));
-    container.appendChild(Util.labelRow("Height", height));
-    container.appendChild(Util.labelRow("Color", color));
+    container.appendChild(Spotlight.optionsDom());
     container.appendChild(Util.labelRow("Domains",domains));
   }
 
@@ -51,19 +76,19 @@ Spotlight.config = {
   boxWidth:5
 }
 
-Spotlight.draw  = function (p, x, y, w, h){
+Spotlight.draw  = function (p, x, y){
   var boxes = Spotlight.config.boxes;
-  var boxWidth = Spotlight.config.boxWidth;
-  var rgb = Spotlight.config.col;
+  var boxWidth = 20;
+  var rgb = state.spotlight.col;
+  var w = state.spotlight.width;
+  var h = state.spotlight.height;
   if(isNaN(boxes)){
     boxes = 3
   }
   if(isNaN(boxWidth)){
     boxWidth=5
   }
-  if(rgb==undefined){
-    rgb = {r:255,g:255,b:255}
-  }
+
 
   p.fill(255,255,255,0)
   p.strokeWeight(boxWidth+1)
