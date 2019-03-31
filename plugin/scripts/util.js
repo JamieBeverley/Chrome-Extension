@@ -57,6 +57,11 @@ Util.floatingSettingsWidget = function(){
 }
 
 
+Util.closeButton = function(f){
+  var container = Util.dom('div',{className:"closeButton",innerHTML:"close"});
+  container.addEventListener('click',f)
+  return container;
+}
 
 Util.domainsWidget = function(ival, onchange){
   var container = Util.dom('div')

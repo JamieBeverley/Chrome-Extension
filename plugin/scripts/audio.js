@@ -120,6 +120,7 @@ Audio.setterDom = function (){
     } else {
       container.innerHTML = ""
       container.appendChild(top);
+      container.appendChild(description);
 
     }
   });
@@ -127,11 +128,14 @@ Audio.setterDom = function (){
   top.appendChild(toggle)
   container.appendChild(top);
 
+  var description = Util.dom('div',{className:"description",innerHTML:Audio.descriptionText})
+  container.appendChild(description)
+
   function appendConfig(){
     var options = Audio.optionsDom()
     var domains = Util.domainsWidget(currentState.audio.domains,(x)=>{currentState.audio.domains=x;chrome.storage.local.set({"state":currentState})})
     container.appendChild(options);
-    container.appendChild(Util.labelRow("Domains",domains));
+    container.appendChild(Util.labelRow("domains",domains));
   }
 
   if(currentState.audio.on){
@@ -142,7 +146,7 @@ Audio.setterDom = function (){
 }///////////////// End Setter Dom
 
 
-
+Audio.descriptionText = "Key presses on your keyboard map to different sounds depending on the 'mode'. Under the 'piano keyboard' mode pressing and holding a key plays a note until you release that key. In generative melody mode, presing the space bar plays a long root note while other key presses play harmonious accompanying notes. In 'sample' mode, key presses play sound samples borrowed from patatap.org"
 
 Audio.synthsPlaying = {}
 
@@ -348,7 +352,7 @@ Audio.synthKeyboard = function(freq,amp){
 
   gain.connect(filter)
 
-  var env = Audio.adsr(0.01,0.3,0.2,0.25);
+  var env = Audio.adsr(0.01,0.3,0.4,0.25);
   filter.connect(env);
   env.connect(Audio.masterGain);
   osc1.start();

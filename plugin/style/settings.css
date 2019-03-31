@@ -59,12 +59,32 @@ html{
 
 }
 
+.labelRow label[class="switch"]{
+  width:46px;
+  height:20px;
+}
+
 .labelRow input{
   position: relative;
   width:50%;
 }
 
+.labelRow input[type="color"]{
+  width:20%;
+}
 
+.labelRow input[type="number"]{
+  width:60px;
+  margin-left: 2px;
+}
+
+
+.description{
+  background-color:rgb(250,250,250);
+  padding:2%;
+  border-radius:5px;
+  font-size:13px;
+}
 
 .top .switch{
   float:right;

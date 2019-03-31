@@ -16,32 +16,10 @@ for (let i in Painting.currentPalette){
 
 
 Painting.optionsDom = function (){
-  // var container = Util.dom('div')
-  // var container = Util.dom('div',{className:"mindful-painting-settings"})
-  // container.style.top = "20px"
-  // container.style.left = "20px";
-  // container.ondrag = function(e){
-  //   // e.preventDefault()
-  //   if(e.clientY!=0){
-  //     container.style.top= e.clientY+"px";
-  //     container.style.left = e.clientX+"px";
-  //   }
-  // }
-  //
-  // var icon = Util.dom('img', {className:"mindful-painting-settings-img","src":chrome.runtime.getURL("/icons/settings.png")})
-  // icon.onclick = function(){
-  //   console.log('test')
-  //   console.log("mindful-painting-settings")
-  //   if(container.classList.contains("expanded")){
-  //     container.classList.remove("expanded")
-  //   } else {
-  //     container.classList.add("expanded")
-  //   }
-  // }
-  // container.appendChild(icon);
+
   var container = Util.dom('div',{})
   var palettePicker = Painting.palettePickerDom()
-  container.appendChild(Util.labelRow("Colors", palettePicker))
+  container.appendChild(Util.labelRow("colors", palettePicker))
 
   var clearToggle = Util.toggle(state.painting.clearEveryFrame,function(x){
     chrome.storage.local.get('state', function(result){
@@ -55,7 +33,7 @@ Painting.optionsDom = function (){
       }
     }
   })
-  container.appendChild(Util.labelRow('Clear canvas',clearToggle))
+  container.appendChild(Util.labelRow('clear canvas',clearToggle))
 
   var brushSettings = Painting.brushSettings();
   container.appendChild(Util.labelRow('brush type',brushSettings))
@@ -122,17 +100,21 @@ Painting.setterDom = function (){
     } else {
       container.innerHTML = ""
       container.appendChild(top);
+      container.appendChild(description)
     }
   });
 
   top.appendChild(toggle)
   container.appendChild(top);
 
+  var description = Util.dom('div',{className:'description',innerHTML:Painting.descriptionText});
+  container.appendChild(description)
+
   function appendConfig(){
     var options = Painting.optionsDom()
     var domains = Util.domainsWidget(currentState.painting.domains,(x)=>{currentState.painting.domains=x;chrome.storage.local.set({"state":currentState})})
     container.appendChild(options)
-    container.appendChild(Util.labelRow("Domains",domains));
+    container.appendChild(Util.labelRow("domains",domains));
 
 
   }
@@ -143,6 +125,8 @@ Painting.setterDom = function (){
 
   return container;
 }
+
+Painting.descriptionText = "With painting mode enabled mouse movements, clicks, and scrolling will draw shapes overtop of your webpage. With the 'clear canvas' setting enabled, shapes will fade away after a short amount of time. With 'clear canvas' off, your drawings will persist (and can always be cleared by turning 'clear canvas' on again). Feel free to change up the colors and brush shape!"
 
 
 Painting.keyPressed = function (e){

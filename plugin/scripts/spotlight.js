@@ -2,12 +2,15 @@ var Spotlight = {}
 
 Spotlight.optionsDom = function(){
   var container = Util.dom('div',{className:'mindful-spotlight-options'});
-
-  var width = Util.dom('input',{type:'range',value:state.spotlight.width,max:1000,min:10});
-  var height = Util.dom('input',{type:'range',value:state.spotlight.height,max:1000,min:10});
+  console.log(state.spotlight.width)
+  var width = Util.dom('input',{type:'range',max:1000,min:10});
+  width.value = state.spotlight.width;
+  var height = Util.dom('input',{type:'range',max:1000,min:10});
+  height.value = state.spotlight.height
   var color = Util.dom('input',{type:"color",value:Util.toHEX(state.spotlight.col),width:100})
 
   width.addEventListener('change',(x)=>{
+    console.log("changed")
     chrome.storage.local.get('state',function(result){
       state = result.state
       state.spotlight.width = parseInt(x.target.value);
@@ -37,36 +40,42 @@ Spotlight.optionsDom = function(){
   return container
 }
 
-Spotlight.setterDom = function(currentState){
+Spotlight.setterDom = function(){
 
   var container = Util.dom("div")
   var top = Util.dom('div',{className:"top"},[Util.dom('div',{className:'title',innerHTML:"Spotlight"})])
-  var toggle = Util.toggle(currentState.spotlight.on, (event) => {
-    currentState.spotlight.on = event.target.checked
-    chrome.storage.local.set({'state':currentState}, (x)=>{console.log('spotlight '+event.target.checked?'on':'off')});
+  var toggle = Util.toggle(state.spotlight.on, (event) => {
+    state.spotlight.on = event.target.checked
+    chrome.storage.local.set({'state':state}, (x)=>{console.log('spotlight '+event.target.checked?'on':'off')});
     if(event.target.checked){
       appendConfig();
     } else {
       container.innerHTML = ""
       container.appendChild(top);
+      container.appendChild(description)
     }
   });
 
   top.appendChild(toggle)
   container.appendChild(top);
 
+  var description = Util.dom('div',{className:'description',innerHTML:Spotlight.descriptionText});
+  container.appendChild(description)
+
   function appendConfig(){
-    var domains = Util.domainsWidget(currentState.spotlight.domains,(x)=>{currentState.spotlight.domains=x;chrome.storage.local.set({"state":currentState})})
     container.appendChild(Spotlight.optionsDom());
-    container.appendChild(Util.labelRow("Domains",domains));
+    var domains = Util.domainsWidget(state.spotlight.domains,(x)=>{state.spotlight.domains=x;chrome.storage.local.set({"state":state})})
+    container.appendChild(Util.labelRow("domains",domains));
   }
 
-  if(currentState.spotlight.on){
+  if(state.spotlight.on){
     appendConfig();
   }
 
   return container;
 }
+
+Spotlight.descriptionText = "With spotlight enabled, your webpage will hidden behind an opaque curtain except for a rectangular window (with configurable dimensions) that slowly follows your mouse."
 
 Spotlight.config = {
   w:400,
@@ -76,12 +85,12 @@ Spotlight.config = {
   boxWidth:5
 }
 
-Spotlight.draw  = function (p, x, y){
+Spotlight.draw  = function (p, x, y, w, h){
   var boxes = Spotlight.config.boxes;
   var boxWidth = 20;
   var rgb = state.spotlight.col;
-  var w = state.spotlight.width;
-  var h = state.spotlight.height;
+  // var h = state.spotlight.height;
+  // var w = state.spotlight.width;
   if(isNaN(boxes)){
     boxes = 3
   }

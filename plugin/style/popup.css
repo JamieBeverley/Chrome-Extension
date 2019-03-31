@@ -4,7 +4,7 @@ html{
 }
 
 .container{
-  width: 150px;
+  width: 180px;
 /*   height: 100px; */
 }
 
@@ -38,6 +38,12 @@ html{
   float:right;
 }
 
+#refresh{
+  display:none;
+  font-size:10pt;
+  color:rgb(120,120,120);
+  transition: 0.5s
+}
 
 
 

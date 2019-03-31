@@ -10,13 +10,13 @@ var currentPalette = palettes[paletteIndex]
 
 var defaultState = {
   audio:{
-    on:true,
+    on:false,
     masterGain:0.2,
     mode:"keyboard",
     domains:[],
   },
   painting:{
-    on:true,
+    on:false,
     clearEveryFrame:true,
     brush:"rectangle",
     currentPalette:currentPalette,
@@ -26,14 +26,17 @@ var defaultState = {
     on:false,
     width:400,
     height:300,
-    col:{r:255,g:255,b:255},
+    col:{r:200,g:215,b:255},
     domains:[]
   },
   timeout:{
     on:false,
+    frequency:15,
+    nextTimeout: 'inf',
     domains:[]
   }
 }
+
 
 
 chrome.runtime.onInstalled.addListener(function(){
